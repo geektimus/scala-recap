@@ -19,12 +19,27 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package example
+package com.codingmaniacs.scala.courses.basic
 
-object Hello extends Greeting with App {
-  println(greeting)
-}
+import scala.annotation.tailrec
 
-trait Greeting {
-  lazy val greeting: String = "hello"
+object NumericExercises {
+
+  val factorial: Int => Option[Int] = (n: Int) => {
+    
+    @tailrec
+    def factRec(acc: Int, number: Int): Option[Int] = number match {
+      case i if i < 1 => None
+      case 1 => Some(acc)
+      case i => factRec(acc * i, i - 1)
+    }
+
+    factRec(1, n)
+  }
+
+  val fibonacci: Int => Int = {
+    case 0 => 0
+    case n if n <= 2 => 1
+    case n => fibonacci(n - 2) + fibonacci(n - 1)
+  }
 }

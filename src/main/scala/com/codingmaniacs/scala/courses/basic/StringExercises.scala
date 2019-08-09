@@ -19,14 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package example
+package com.codingmaniacs.scala.courses.basic
 
-import org.specs2.mutable.Specification
+object StringExercises {
 
-class HelloSpec extends Specification {
-  "The Hello object" should {
-    "say hello" in {
-      Hello.greeting mustEqual "hello"
+  def greet(username: String, age: Int): Option[String] =
+    (username, age) match {
+      case (s, _) if s == null || s.trim.isEmpty => None
+      case (s, n) if n > 0 => Some(s"Hi, My name is $s and I am $n years old.")
+      case _ => None
     }
-  }
 }
