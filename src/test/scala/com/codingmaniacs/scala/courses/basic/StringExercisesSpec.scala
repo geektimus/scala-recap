@@ -34,4 +34,19 @@ class StringExercisesSpec extends Specification {
       greet must beNone
     }
   }
+
+  "The string concatenator" should {
+    "return a string repeated n times (4)" in {
+      val repeatedStr = StringExercises.repeat("string", 4)
+      repeatedStr mustEqual "stringstringstringstring"
+    }
+    "return a string repeated n times (2)" in {
+      val repeatedStr = StringExercises.repeat("test", 2)
+      repeatedStr mustEqual "testtest"
+    }
+    "return the given string if the number of repetitions is non valid  (n < 0)" in {
+      val repeatedStr = StringExercises.repeat("nonvalid", -1)
+      repeatedStr mustEqual "nonvalid"
+    }
+  }
 }
