@@ -25,10 +25,10 @@ import scala.annotation.tailrec
 
 object NumericExercises {
 
-  val factorial: Int => Option[Int] = (n: Int) => {
+  val factorial: Int => Option[BigInt] = (n: Int) => {
 
     @tailrec
-    def factRec(acc: Int, number: Int): Option[Int] = number match {
+    def factRec(acc: Int, number: Int): Option[BigInt] = number match {
       case i if i < 1 => None
       case 1 => Some(acc)
       case i => factRec(acc * i, i - 1)
@@ -37,10 +37,10 @@ object NumericExercises {
     factRec(1, n)
   }
 
-  val fibonacci: Int => Int = (n: Int) => {
+  val fibonacci: Int => BigInt = (n: Int) => {
 
     @tailrec
-    def fibonacciRec(i: Int, prev: Int, current: Int): Int =
+    def fibonacciRec(i: Int, prev: Int, current: Int): BigInt =
       if (i <= 0) {
         current
       } else {
