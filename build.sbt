@@ -7,15 +7,15 @@ lazy val `scala-courses` =
     .settings(dockerSettings)
     .settings(
       libraryDependencies ++= Seq(
-        library.log4j2Api,
-        library.log4j2Core,
-        library.log4j2Scala,
-        library.scalaLogging,
-        library.slf4j,
-        library.scalaCheck % Test,
-        library.specs2 % Test
-      ),
-      version in Docker := "0.1.0-SNAPSHOT",
+          library.log4j2Api,
+          library.log4j2Core,
+          library.log4j2Scala,
+          library.scalaLogging,
+          library.slf4j,
+          library.scalaCheck % Test,
+          library.specs2 % Test
+        ),
+      version in Docker := "0.1.0-SNAPSHOT"
     )
 
 // *****************************************************************************
@@ -50,37 +50,38 @@ lazy val library =
 
 lazy val settings =
   commonSettings ++
-    gitSettings ++
-    scalafmtSettings
+  gitSettings ++
+  scalafmtSettings
 
 lazy val commonSettings =
   Seq(
     // scalaVersion from .travis.yml via sbt-travisci
-    // scalaVersion := "2.12.8",
+    // scalaVersion := "2.12.9",
     version := "0.1.0-SNAPSHOT",
     organization := "com.codingmaniacs.scala.courses",
     headerLicense := Some(HeaderLicense.MIT("2019", "Geektimus")),
     scalacOptions ++= Seq(
-      "-deprecation",
-      "-encoding", "UTF-8",
-      "-feature",
-      "-language:existentials",
-      "-language:higherKinds",
-      "-language:implicitConversions",
-      "-language:postfixOps",
-      "-target:jvm-1.8",
-      "-unchecked",
-      "-Xfatal-warnings",
-      "-Xlint",
-      "-Yno-adapted-args",
-      "-Ypartial-unification",
-      "-Ywarn-dead-code",
-      "-Ywarn-infer-any",
-      "-Ywarn-numeric-widen",
-      "-Ywarn-unused",
-      "-Ywarn-unused-import",
-      "-Ywarn-value-discard"
-    ),
+        "-deprecation",
+        "-encoding",
+        "UTF-8",
+        "-feature",
+        "-language:existentials",
+        "-language:higherKinds",
+        "-language:implicitConversions",
+        "-language:postfixOps",
+        "-target:jvm-1.8",
+        "-unchecked",
+        "-Xfatal-warnings",
+        "-Xlint",
+        "-Yno-adapted-args",
+        "-Ypartial-unification",
+        "-Ywarn-dead-code",
+        "-Ywarn-infer-any",
+        "-Ywarn-numeric-widen",
+        "-Ywarn-unused",
+        "-Ywarn-unused-import",
+        "-Ywarn-value-discard"
+      ),
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
   )
@@ -98,5 +99,5 @@ lazy val gitSettings =
 
 lazy val scalafmtSettings =
   Seq(
-    scalafmtOnCompile := true,
+    scalafmtOnCompile := true
   )
