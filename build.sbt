@@ -82,6 +82,7 @@ lazy val commonSettings =
         "-Ywarn-unused-import",
         "-Ywarn-value-discard"
       ),
+    parallelExecution.in(Test) := false,
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
   )
