@@ -5,3 +5,11 @@ scala:
 
 jdk:
   - openjdk8
+
+branches:
+  # safe list
+  only:
+    - master
+  except:
+    # block list
+    - /^feature.*$/
