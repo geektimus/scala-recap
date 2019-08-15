@@ -21,25 +21,25 @@
 
 package com.codingmaniacs.scala.courses.oop
 
-import com.codingmaniacs.scala.courses.oop.Inheritance.{ CustomList, EmptyList }
+import com.codingmaniacs.scala.courses.oop.Inheritance.{ List, EmptyList }
 import org.specs2.matcher.AnyMatchers
 import org.specs2.mutable.Specification
 
 class InheritanceSpec extends Specification with AnyMatchers {
   "The custom list" should {
     "allow the creation of an EmptyList" in {
-      val emptyList = EmptyList()
+      val emptyList = EmptyList
       emptyList must not be null
       emptyList.isEmpty must beTrue
     }
     "allow the user to add elements to an EmptyList" in {
-      val list = EmptyList().prepend(2)
+      val list = EmptyList.prepend(2)
       list.isEmpty must beFalse
       list.head mustEqual 2
       list.tail.isEmpty must beTrue
     }
     "allow the user to create a non empty list" in {
-      val list = new CustomList(1, new CustomList(2, EmptyList()))
+      val list = new List(1, new List(2, EmptyList))
       list.isEmpty must beFalse
       list.head mustEqual 1
       val tail = list.tail
@@ -47,12 +47,12 @@ class InheritanceSpec extends Specification with AnyMatchers {
       tail.tail.isEmpty must beTrue
     }
     "allow the user to reverse an empty list (duh!)" in {
-      val emptyList = EmptyList()
+      val emptyList = EmptyList
       emptyList.isEmpty must beTrue
       emptyList.reverse.isEmpty must beTrue
     }
     "allow the user to reverse a custom list" in {
-      val list = new CustomList(1, new CustomList(2, EmptyList()))
+      val list = new List(1, new List(2, EmptyList))
       list.isEmpty must beFalse
       val reversedList = list.reverse
       reversedList.head mustEqual 2
@@ -61,12 +61,12 @@ class InheritanceSpec extends Specification with AnyMatchers {
       tail.tail.isEmpty must beTrue
     }
     "allow the user to print the elements of a custom list" in {
-      val list = new CustomList(1, new CustomList(2, EmptyList()))
+      val list = new List(1, new List(2, EmptyList))
       list.isEmpty must beFalse
       list.toString mustEqual "[1,2]"
     }
     "allow create a list in a easy way" in {
-      val list = CustomList(1, 2, 3, 4, 5, 6)
+      val list = List(1, 2, 3, 4, 5, 6)
       list.isEmpty must beFalse
       list.toString mustEqual "[6,5,4,3,2,1]"
     }

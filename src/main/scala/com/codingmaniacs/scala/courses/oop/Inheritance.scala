@@ -25,54 +25,50 @@ import scala.annotation.tailrec
 
 object Inheritance {
 
-  abstract class MyList[T] {
+  sealed abstract class MyList[+T] {
     def head: T
     def tail: MyList[T]
     def isEmpty: Boolean
 
-    def prepend(n: T): MyList[T]
+    def prepend[O >: T](n: O): MyList[O]
     def reverse: MyList[T]
 
     protected def prettyPrint: String
     override def toString: String = s"[$prettyPrint]"
   }
 
-  class EmptyList[T] extends MyList[T] {
-    override def head: T = throw new NoSuchElementException
+  object EmptyList extends MyList[Nothing] {
+    override def head: Nothing = throw new NoSuchElementException
 
-    override def tail: MyList[T] = throw new NoSuchElementException
+    override def tail: MyList[Nothing] = throw new NoSuchElementException
 
     override def isEmpty: Boolean = true
 
-    override def prepend(n: T): MyList[T] = new CustomList(n, EmptyList())
+    override def prepend[O >: Nothing](n: O): MyList[O] = new List(n, EmptyList)
 
-    override def reverse: MyList[T] = EmptyList()
+    override def reverse: MyList[Nothing] = EmptyList
 
     override protected def prettyPrint: String = ""
   }
 
-  object EmptyList {
-    def apply[T](): EmptyList[T] = new EmptyList()
-  }
-
-  class CustomList[T](x: T, xs: MyList[T]) extends MyList[T] {
+  class List[+T](x: T, xs: MyList[T]) extends MyList[T] {
     override def head: T = x
 
     override def tail: MyList[T] = xs
 
     override def isEmpty: Boolean = false
 
-    override def prepend(n: T): MyList[T] = new CustomList(n, this)
+    override def prepend[O >: T](n: O): MyList[O] = new List(n, this)
 
     override def reverse: MyList[T] = {
 
       @tailrec
       def reverseRec(res: MyList[T], rem: MyList[T]): MyList[T] =
         rem match {
-          case _: EmptyList[T] => res
+          case l if l.isEmpty => res
           case l => reverseRec(res.prepend(l.head), l.tail)
         }
-      reverseRec(EmptyList(), this)
+      reverseRec(EmptyList, this)
     }
 
     override def prettyPrint: String = {
@@ -82,15 +78,15 @@ object Inheritance {
         list match {
           case l if l.isEmpty => acc
           case l if acc.isEmpty => toStringRec(s"${l.head}", l.tail)
-          case l: CustomList[T] => toStringRec(s"$acc,${l.head}", l.tail)
+          case l: List[T] => toStringRec(s"$acc,${l.head}", l.tail)
         }
 
       toStringRec("", this)
     }
   }
 
-  object CustomList {
-    def apply[T](x: T, xs: MyList[T]): MyList[T] = new CustomList(x, xs)
+  object List {
+    def apply[T](x: T, xs: MyList[T]): MyList[T] = new List(x, xs)
 
     def apply[T](xs: T*): MyList[T] = {
 
@@ -100,7 +96,7 @@ object Inheritance {
           case Seq() => res
           case Seq(head, tail @ _*) => concatRec(res.prepend(head), tail)
         }
-      concatRec(EmptyList(), xs)
+      concatRec(EmptyList, xs)
     }
   }
 }
