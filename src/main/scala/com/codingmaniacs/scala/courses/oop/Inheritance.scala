@@ -46,12 +46,13 @@ object Inheritance {
   }
 
   sealed abstract class MyList[+T] {
-    def head: T
-    def tail: MyList[T]
+    def h: T
+    def t: MyList[T]
     def isEmpty: Boolean
 
     def prepend[O >: T](n: O): MyList[O]
     def reverse: MyList[T]
+    def ++[O >: T](ol: MyList[O]): MyList[O]
 
     def map[O](t: Transformer[T, O]): MyList[O]
     def filter(p: Predicate[T]): MyList[T]
@@ -62,15 +63,17 @@ object Inheritance {
   }
 
   object EmptyList extends MyList[Nothing] {
-    override def head: Nothing = throw new NoSuchElementException
+    override def h: Nothing = throw new NoSuchElementException
 
-    override def tail: MyList[Nothing] = throw new NoSuchElementException
+    override def t: MyList[Nothing] = throw new NoSuchElementException
 
     override def isEmpty: Boolean = true
 
     override def prepend[O >: Nothing](n: O): MyList[O] = new List(n, EmptyList)
 
     override def reverse: MyList[Nothing] = this
+
+    override def ++[O >: Nothing](ol: MyList[O]): MyList[O] = ol
 
     override def map[O](t: Transformer[Nothing, O]): MyList[O] = this
 
@@ -83,9 +86,9 @@ object Inheritance {
   }
 
   class List[+T](x: T, xs: MyList[T]) extends MyList[T] {
-    override def head: T = x
+    override def h: T = x
 
-    override def tail: MyList[T] = xs
+    override def t: MyList[T] = xs
 
     override def isEmpty: Boolean = false
 
@@ -97,10 +100,13 @@ object Inheritance {
       def reverseRec(res: MyList[T], rem: MyList[T]): MyList[T] =
         rem match {
           case l if l.isEmpty => res
-          case l => reverseRec(res.prepend(l.head), l.tail)
+          case l => reverseRec(res.prepend(l.h), l.t)
         }
       reverseRec(EmptyList, this)
     }
+
+    override def ++[O >: T](ol: MyList[O]): MyList[O] =
+      new List[O](h, t ++ ol)
 
     override def map[O](t: Transformer[T, O]): MyList[O] = {
 
@@ -108,7 +114,7 @@ object Inheritance {
       def mapRec(res: MyList[O], rem: MyList[T]): MyList[O] =
         rem match {
           case l if l.isEmpty => res
-          case l => mapRec(res.prepend(t.transform(l.head)), l.tail)
+          case l => mapRec(res.prepend(t.transform(l.h)), l.t)
         }
       mapRec(EmptyList, this)
     }
@@ -119,13 +125,22 @@ object Inheritance {
       def filterRec(res: MyList[T], rem: MyList[T]): MyList[T] =
         rem match {
           case l if l.isEmpty => res
-          case l if p.test(l.head) => filterRec(res.prepend(l.head), l.tail)
-          case l => filterRec(res, l.tail)
+          case l if p.test(l.h) => filterRec(res.prepend(l.h), l.t)
+          case l => filterRec(res, l.t)
         }
       filterRec(EmptyList, this)
     }
 
-    override def flapMap[O](t: Transformer[T, MyList[O]]): MyList[O] = ???
+    override def flapMap[O](t: Transformer[T, MyList[O]]): MyList[O] = {
+
+      @tailrec
+      def flatMapRec(res: MyList[O], rem: MyList[T]): MyList[O] =
+        rem match {
+          case l if l.isEmpty => res
+          case l => flatMapRec(res ++ t.transform(l.h), l.t)
+        }
+      flatMapRec(EmptyList, this)
+    }
 
     override def prettyPrint: String = {
 
@@ -133,8 +148,8 @@ object Inheritance {
       def toStringRec(acc: String, list: MyList[T]): String =
         list match {
           case l if l.isEmpty => acc
-          case l if acc.isEmpty => toStringRec(s"${l.head}", l.tail)
-          case l: List[T] => toStringRec(s"$acc,${l.head}", l.tail)
+          case l if acc.isEmpty => toStringRec(s"${l.h}", l.t)
+          case l: List[T] => toStringRec(s"$acc, ${l.h}", l.t)
         }
 
       toStringRec("", this)

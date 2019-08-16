@@ -41,16 +41,16 @@ class InheritanceSpec extends Specification with AnyMatchers {
     "allow the user to add elements to an EmptyList" in {
       val list = EmptyList.prepend(2)
       list.isEmpty must beFalse
-      list.head mustEqual 2
-      list.tail.isEmpty must beTrue
+      list.h mustEqual 2
+      list.t.isEmpty must beTrue
     }
     "allow the user to create a non empty list" in {
       val list = new List(1, new List(2, EmptyList))
       list.isEmpty must beFalse
-      list.head mustEqual 1
-      val tail = list.tail
-      tail.head mustEqual 2
-      tail.tail.isEmpty must beTrue
+      list.h mustEqual 1
+      val tail = list.t
+      tail.h mustEqual 2
+      tail.t.isEmpty must beTrue
     }
     "allow the user to reverse an empty list (duh!)" in {
       val emptyList = EmptyList
@@ -61,20 +61,20 @@ class InheritanceSpec extends Specification with AnyMatchers {
       val list = new List(1, new List(2, EmptyList))
       list.isEmpty must beFalse
       val reversedList = list.reverse
-      reversedList.head mustEqual 2
-      val tail = reversedList.tail
-      tail.head mustEqual 1
-      tail.tail.isEmpty must beTrue
+      reversedList.h mustEqual 2
+      val tail = reversedList.t
+      tail.h mustEqual 1
+      tail.t.isEmpty must beTrue
     }
     "allow the user to print the elements of a custom list" in {
       val list = new List(1, new List(2, EmptyList))
       list.isEmpty must beFalse
-      list.toString mustEqual "[1,2]"
+      list.toString mustEqual "[1, 2]"
     }
     "allow create a list in a easy way" in {
       val list = List(1, 2, 3, 4, 5, 6)
       list.isEmpty must beFalse
-      list.toString mustEqual "[6,5,4,3,2,1]"
+      list.toString mustEqual "[6, 5, 4, 3, 2, 1]"
     }
 
     "allow the user to map a transformation on a empty list" in {
@@ -93,9 +93,9 @@ class InheritanceSpec extends Specification with AnyMatchers {
       val mappedList = list.map(double)
 
       mappedList.isEmpty must beFalse
-      mappedList.head mustEqual 2
-      mappedList.tail.head mustEqual 4
-      mappedList.tail.tail.head mustEqual 6
+      mappedList.h mustEqual 2
+      mappedList.t.h mustEqual 4
+      mappedList.t.t.h mustEqual 6
     }
 
     "allow the user to filter an empty list" in {
@@ -114,8 +114,52 @@ class InheritanceSpec extends Specification with AnyMatchers {
       val mappedList = list.filter(evenPredicate)
 
       mappedList.isEmpty must beFalse
-      mappedList.head mustEqual 2
-      mappedList.tail.isEmpty must beTrue
+      mappedList.h mustEqual 2
+      mappedList.t.isEmpty must beTrue
+    }
+
+    "allow the user to concatenate a empty list with a list" in {
+      val emptyList = EmptyList
+      val list = List(1, 2, 3)
+
+      val result = emptyList ++ list
+
+      result.isEmpty must beFalse
+      result.h mustEqual 3
+      result.t.h mustEqual 2
+    }
+
+    "allow the user to concatenate two lists" in {
+      val list = List(1, 2)
+      val otherList = List(3, 4)
+
+      val result = otherList ++ list
+
+      result.isEmpty must beFalse
+      result.h mustEqual 4
+      result.t.h mustEqual 3
+      result.t.t.h mustEqual 2
+    }
+
+    "allow the user to flatMap over an empty list" in {
+      val emptyList = EmptyList
+      val pairTransformer = new PairTransformer()
+
+      val result = emptyList.flapMap(pairTransformer)
+
+      result.isEmpty must beTrue
+    }
+
+    "allow the user to flatMap over a list" in {
+      val list = List(1, 2, 3)
+      val pairTransformer = new PairTransformer()
+
+      val result = list.flapMap(pairTransformer)
+
+      result.isEmpty must beFalse
+      result.h mustEqual 3
+      result.t.h mustEqual 9
+      result.toString mustEqual "[3, 9, 2, 4, 1, 1]"
     }
   }
 }
