@@ -62,7 +62,7 @@ object Inheritance {
     override def toString: String = s"[$prettyPrint]"
   }
 
-  object EmptyList extends MyList[Nothing] {
+  case object EmptyList extends MyList[Nothing] {
     override def h: Nothing = throw new NoSuchElementException
 
     override def t: MyList[Nothing] = throw new NoSuchElementException
@@ -85,7 +85,7 @@ object Inheritance {
 
   }
 
-  class List[+T](x: T, xs: MyList[T]) extends MyList[T] {
+  case class List[+T](x: T, xs: MyList[T]) extends MyList[T] {
     override def h: T = x
 
     override def t: MyList[T] = xs
@@ -108,13 +108,13 @@ object Inheritance {
     override def ++[O >: T](ol: MyList[O]): MyList[O] =
       new List[O](h, t ++ ol)
 
-    override def map[O](t: Transformer[T, O]): MyList[O] = {
+    override def map[O](tr: Transformer[T, O]): MyList[O] = {
 
       @tailrec
       def mapRec(res: MyList[O], rem: MyList[T]): MyList[O] =
         rem match {
           case l if l.isEmpty => res
-          case l => mapRec(res.prepend(t.transform(l.h)), l.t)
+          case l => mapRec(res.prepend(tr.transform(l.h)), l.t)
         }
       mapRec(EmptyList, this)
     }
@@ -131,16 +131,8 @@ object Inheritance {
       filterRec(EmptyList, this)
     }
 
-    override def flapMap[O](t: Transformer[T, MyList[O]]): MyList[O] = {
-
-      @tailrec
-      def flatMapRec(res: MyList[O], rem: MyList[T]): MyList[O] =
-        rem match {
-          case l if l.isEmpty => res
-          case l => flatMapRec(res ++ t.transform(l.h), l.t)
-        }
-      flatMapRec(EmptyList, this)
-    }
+    override def flapMap[O](tr: Transformer[T, MyList[O]]): MyList[O] =
+      tr.transform(h) ++ t.flapMap(tr)
 
     override def prettyPrint: String = {
 
