@@ -21,7 +21,13 @@
 
 package com.codingmaniacs.scala.courses.oop
 
-import com.codingmaniacs.scala.courses.oop.Inheritance.{ List, EmptyList }
+import com.codingmaniacs.scala.courses.oop.Inheritance.{
+  DoubleTransformer,
+  EmptyList,
+  EvenPredicate,
+  List,
+  PairTransformer
+}
 import org.specs2.matcher.AnyMatchers
 import org.specs2.mutable.Specification
 
@@ -69,6 +75,47 @@ class InheritanceSpec extends Specification with AnyMatchers {
       val list = List(1, 2, 3, 4, 5, 6)
       list.isEmpty must beFalse
       list.toString mustEqual "[6,5,4,3,2,1]"
+    }
+
+    "allow the user to map a transformation on a empty list" in {
+      val emptyList = EmptyList
+      val double = new DoubleTransformer()
+
+      val mappedList = emptyList.map(double)
+
+      mappedList.isEmpty must beTrue
+    }
+
+    "allow the user to map a transformation on all the elements" in {
+      val list = List(1, 2, 3)
+      val double = new DoubleTransformer()
+
+      val mappedList = list.map(double)
+
+      mappedList.isEmpty must beFalse
+      mappedList.head mustEqual 2
+      mappedList.tail.head mustEqual 4
+      mappedList.tail.tail.head mustEqual 6
+    }
+
+    "allow the user to filter an empty list" in {
+      val emptyList = EmptyList
+      val evenPredicate = new EvenPredicate()
+
+      val mappedList = emptyList.filter(evenPredicate)
+
+      mappedList.isEmpty must beTrue
+    }
+
+    "allow the user to filter the elements of a list" in {
+      val list = List(1, 2, 3)
+      val evenPredicate = new EvenPredicate()
+
+      val mappedList = list.filter(evenPredicate)
+
+      mappedList.isEmpty must beFalse
+      mappedList.head mustEqual 2
+      mappedList.tail.isEmpty must beTrue
     }
   }
 }
