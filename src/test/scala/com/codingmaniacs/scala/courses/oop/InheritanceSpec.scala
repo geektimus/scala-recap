@@ -35,7 +35,6 @@ class InheritanceSpec extends Specification with AnyMatchers {
   "The custom list" should {
     "allow the creation of an EmptyList" in {
       val emptyList = EmptyList
-      emptyList must not be null
       emptyList.isEmpty must beTrue
     }
     "allow the user to add elements to an EmptyList" in {

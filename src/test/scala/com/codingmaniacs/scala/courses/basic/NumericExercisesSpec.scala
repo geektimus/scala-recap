@@ -27,11 +27,12 @@ class NumericExercisesSpec extends Specification {
   "The calculator" should {
     "return the factorial of a given positive integer (1)" in {
       val factorial = NumericExercises.factorial(1)
-      factorial.get mustEqual 1
+      factorial must beSome
+      factorial.getOrElse(0) mustEqual 1
     }
     "return the factorial of a given positive integer (5)" in {
       val factorial = NumericExercises.factorial(5)
-      factorial.get mustEqual 120
+      factorial.getOrElse(0) mustEqual 120
     }
     "fail when provided with a non valid value (n < 1)" in {
       val factorial = NumericExercises.factorial(0)

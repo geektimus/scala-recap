@@ -27,7 +27,7 @@ class StringExercisesSpec extends Specification {
   "The greeting function" should {
     "return a greeting when the name and age are provided" in {
       val greet = StringExercises.greet("User", 20)
-      greet.get mustEqual "Hi, My name is User and I am 20 years old."
+      greet.getOrElse("") mustEqual "Hi, My name is User and I am 20 years old."
     }
     "fail to greet when the name is not provided" in {
       val greet = StringExercises.greet("", 20)
