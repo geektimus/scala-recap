@@ -21,11 +21,43 @@
 
 package com.codingmaniacs.scala.exercises.fs.directories
 
+import scala.annotation.tailrec
+
 class Directory(
   override val parentPath: String,
   override val name: String,
   val contents: List[DirEntry]
-) extends DirEntry(parentPath, name)
+) extends DirEntry(parentPath, name) {
+
+  def hasEntry(name: String): Boolean = findEntry(name) != null
+
+  def getAllFoldersInPath: List[String] =
+    path.substring(1).split(Directory.SEPARATOR).toList.filter(p => !p.isEmpty)
+
+  def findDescendant(paths: List[String]): Directory =
+    if (paths.isEmpty) this
+    else findEntry(paths.head).asDirectory.findDescendant(paths.tail)
+
+  def addEntry(newEntry: DirEntry): Directory =
+    new Directory(parentPath, name, contents :+ newEntry)
+
+  def findEntry(entryName: String): DirEntry = {
+
+    @tailrec
+    def findEntryHelper(name: String, contentsList: List[DirEntry]): DirEntry =
+      if (contentsList.isEmpty) {
+        null
+      } else if (contentsList.head.name.equals(name)) {
+        contentsList.headOption.get
+      } else findEntryHelper(name, contentsList.tail)
+    findEntryHelper(entryName, contents)
+  }
+
+  def replaceEntry(entryName: String, newEntry: Directory): Directory =
+    new Directory(parentPath, name, contents.filter(p => !p.name.equals(entryName)) :+ newEntry)
+
+  override def asDirectory: Directory = this
+}
 
 object Directory {
   val SEPARATOR = "/"

@@ -21,4 +21,8 @@
 
 package com.codingmaniacs.scala.exercises.fs.directories
 
-abstract class DirEntry(val parentPath: String, val name: String)
+abstract class DirEntry(val parentPath: String, val name: String) {
+  def path: String = s"$parentPath${Directory.SEPARATOR}$name"
+
+  def asDirectory: Directory
+}
