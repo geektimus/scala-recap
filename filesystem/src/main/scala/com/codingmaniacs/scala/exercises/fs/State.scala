@@ -25,9 +25,10 @@ import com.codingmaniacs.scala.exercises.fs.directories.Directory
 
 class State(val root: Directory, val workingDir: Directory, val output: String) {
 
-  def show(): Unit =
+  def show(): Unit = {
     println(output)
-  print(State.SHELL_PROMPT)
+    print(State.SHELL_PROMPT)
+  }
 
   def setMessage(message: String): State = State(root, workingDir, message)
 }

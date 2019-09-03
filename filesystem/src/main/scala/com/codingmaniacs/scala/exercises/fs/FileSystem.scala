@@ -26,7 +26,7 @@ import java.util.Scanner
 import com.codingmaniacs.scala.exercises.fs.commands.Command
 import com.codingmaniacs.scala.exercises.fs.directories.Directory
 
-object Filesystem {
+object FileSystem {
 
   def main(args: Array[String]): Unit = {
 

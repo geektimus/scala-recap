@@ -23,7 +23,7 @@ package com.codingmaniacs.scala.exercises.fs.files
 
 import com.codingmaniacs.scala.exercises.fs.directories.{ DirEntry, Directory }
 
-class File(override val parentPath: String, override val name: String, contents: String)
+class File(override val parentPath: String, override val name: String)
     extends DirEntry(parentPath, name) {
   override def asDirectory: Directory =
     throw new FileSystemException("A file cannot be converted to a directory!")
@@ -36,5 +36,5 @@ class File(override val parentPath: String, override val name: String, contents:
 object File {
 
   def empty(parentPath: String, name: String): File =
-    new File(parentPath, name, "")
+    new File(parentPath, name)
 }
