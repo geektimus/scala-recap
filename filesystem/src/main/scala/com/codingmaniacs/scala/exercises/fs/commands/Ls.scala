@@ -19,12 +19,21 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.codingmaniacs.scala.exercises.fs.directories
+package com.codingmaniacs.scala.exercises.fs.commands
+import com.codingmaniacs.scala.exercises.fs.State
+import com.codingmaniacs.scala.exercises.fs.directories.DirEntry
 
-abstract class DirEntry(val parentPath: String, val name: String) {
-  def path: String = s"$parentPath${Directory.SEPARATOR}$name"
+class Ls extends Command {
+  override def apply(state: State): State = {
+    val contents = state.workingDir.contents
+    val outputString = createOutputString(contents)
+    state.setMessage(outputString)
+  }
 
-  def asDirectory: Directory
-
-  def getType: String
+  def createOutputString(contents: List[DirEntry]): String =
+    if (contents.isEmpty) ""
+    else {
+      val entry = contents.head
+      s"${entry.name} [${entry.getType}]\n${createOutputString(contents.tail)}"
+    }
 }

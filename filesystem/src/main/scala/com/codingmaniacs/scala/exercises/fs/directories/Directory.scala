@@ -57,6 +57,8 @@ class Directory(
     new Directory(parentPath, name, contents.filter(p => !p.name.equals(entryName)) :+ newEntry)
 
   override def asDirectory: Directory = this
+
+  override def getType: String = "Directory"
 }
 
 object Directory {
