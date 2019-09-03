@@ -19,16 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.codingmaniacs.scala.exercises.fs.directories
+package com.codingmaniacs.scala.exercises.fs.files
 
-import com.codingmaniacs.scala.exercises.fs.files.File
-
-abstract class DirEntry(val parentPath: String, val name: String) {
-  def path: String = s"$parentPath${Directory.SEPARATOR}$name"
-
-  def asDirectory: Directory
-
-  def asFile: File
-
-  def getType: String
-}
+class FileSystemException(msg: String) extends RuntimeException(msg) {}

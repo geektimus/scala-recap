@@ -21,6 +21,8 @@
 
 package com.codingmaniacs.scala.exercises.fs.directories
 
+import com.codingmaniacs.scala.exercises.fs.files.{ File, FileSystemException }
+
 import scala.annotation.tailrec
 
 class Directory(
@@ -59,6 +61,9 @@ class Directory(
   override def asDirectory: Directory = this
 
   override def getType: String = "Directory"
+
+  override def asFile: File =
+    throw new FileSystemException("A folder cannot be converted to a file!")
 }
 
 object Directory {

@@ -19,16 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.codingmaniacs.scala.exercises.fs.directories
+package com.codingmaniacs.scala.exercises.fs.files
 
-import com.codingmaniacs.scala.exercises.fs.files.File
+import com.codingmaniacs.scala.exercises.fs.directories.{ DirEntry, Directory }
 
-abstract class DirEntry(val parentPath: String, val name: String) {
-  def path: String = s"$parentPath${Directory.SEPARATOR}$name"
+class File(override val parentPath: String, override val name: String, contents: String)
+    extends DirEntry(parentPath, name) {
+  override def asDirectory: Directory =
+    throw new FileSystemException("A file cannot be converted to a directory!")
 
-  def asDirectory: Directory
+  override def getType: String = "File"
 
-  def asFile: File
+  override def asFile: File = this
+}
 
-  def getType: String
+object File {
+
+  def empty(parentPath: String, name: String): File =
+    new File(parentPath, name, "")
 }
