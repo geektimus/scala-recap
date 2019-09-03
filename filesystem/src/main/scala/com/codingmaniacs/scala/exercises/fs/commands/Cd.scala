@@ -20,58 +20,49 @@
  */
 
 package com.codingmaniacs.scala.exercises.fs.commands
-
 import com.codingmaniacs.scala.exercises.fs.State
+import com.codingmaniacs.scala.exercises.fs.directories.{ DirEntry, Directory }
 
-trait Command {
-  def apply(state: State): State
-}
+import scala.annotation.tailrec
 
-object Command {
+class Cd(dir: String) extends Command {
 
-  val MKDIR = "mkdir"
-  val LS = "ls"
-  val PWD = "pwd"
-  val TOUCH = "touch"
-  val CD = "cd"
+  override def apply(state: State): State = {
+    val root = state.root
 
-  def emptyCommand: Command = new Command {
-    override def apply(state: State): State = state
-  }
+    val wd = state.workingDir
 
-  def incompleteCommand(name: String): Command = new Command {
-    override def apply(state: State): State =
-      state.setMessage(s"$name is an incomplete command")
-  }
-
-  def from(input: String): Command = {
-    val tokens = input.split(" ")
-    if (input.isEmpty || tokens.isEmpty) {
-      emptyCommand
-    } else if (MKDIR.equals(tokens(0))) {
-      if (tokens.length < 2) {
-        incompleteCommand(MKDIR)
-      } else {
-        new MkDir(tokens(1))
-      }
-    } else if (LS.equals(tokens(0))) {
-      new Ls()
-    } else if (PWD.equals(tokens(0))) {
-      new Pwd()
-    } else if (TOUCH.equals(tokens(0))) {
-      if (tokens.length < 2) {
-        incompleteCommand(TOUCH)
-      } else {
-        new Touch(tokens(1))
-      }
-    } else if (CD.equals(tokens(0))) {
-      if (tokens.length < 2) {
-        incompleteCommand(CD)
-      } else {
-        new Cd(tokens(1))
-      }
+    val absPath = if (dir.startsWith(Directory.SEPARATOR)) {
+      dir
+    } else if (wd.isRoot) {
+      wd.path + dir
     } else {
-      new UnknownCommand
+      wd.path + Directory.SEPARATOR + dir
     }
+
+    val dstDir = doFindEntry(root, absPath)
+
+    if (dstDir == null || !dstDir.isDirectory) {
+      state.setMessage(s"$dir: Not such directory")
+    } else {
+      State(root, dstDir.asDirectory)
+    }
+  }
+
+  def doFindEntry(root: Directory, absPath: String): DirEntry = {
+
+    @tailrec
+    def findEntryHelper(currDir: Directory, path: List[String]): DirEntry =
+      if (path.isEmpty || path.head.isEmpty) currDir
+      else if (path.tail.isEmpty) currDir.findEntry(path.head)
+      else {
+        val nextDir = currDir.findEntry(path.head)
+        if (nextDir == null || !nextDir.isDirectory) null
+        else findEntryHelper(nextDir.asDirectory, path.tail)
+      }
+
+    val tokens = absPath.substring(1).split(Directory.SEPARATOR).toList
+
+    findEntryHelper(root, tokens)
   }
 }

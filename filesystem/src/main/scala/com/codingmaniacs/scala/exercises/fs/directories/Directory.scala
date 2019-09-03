@@ -58,12 +58,17 @@ class Directory(
   def replaceEntry(entryName: String, newEntry: Directory): Directory =
     new Directory(parentPath, name, contents.filter(p => !p.name.equals(entryName)) :+ newEntry)
 
+  def isRoot: Boolean = parentPath.isEmpty
+
   override def asDirectory: Directory = this
 
   override def getType: String = "Directory"
 
   override def asFile: File =
     throw new FileSystemException("A folder cannot be converted to a file!")
+
+  override def isDirectory: Boolean = true
+  override def isFile: Boolean = !isDirectory
 }
 
 object Directory {
