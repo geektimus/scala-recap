@@ -63,6 +63,25 @@ class Cd(dir: String) extends Command {
 
     val tokens = absPath.substring(1).split(Directory.SEPARATOR).toList
 
-    findEntryHelper(root, tokens)
+    val newTokens = collapseRelativeTokens(tokens)
+
+    if (newTokens == null) null else findEntryHelper(root, newTokens)
+  }
+
+  def collapseRelativeTokens(tokens: List[String]): List[String] = {
+    @tailrec
+    def collapseTokensRec(tokens: List[String], res: List[String]): List[String] =
+      tokens match {
+        case List() => res
+        case h :: tail if h.equals(".") => collapseTokensRec(tail, res)
+        case h :: tail if h.equals("..") =>
+          res match {
+            case List() => null
+            case init :+ _ => collapseTokensRec(tail, init)
+          }
+        case h :: tail => collapseTokensRec(tail, res :+ h)
+      }
+
+    collapseTokensRec(tokens, List())
   }
 }
