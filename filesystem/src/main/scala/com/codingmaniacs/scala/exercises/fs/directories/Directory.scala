@@ -40,6 +40,10 @@ class Directory(
     if (paths.isEmpty) this
     else findEntry(paths.head).asDirectory.findDescendant(paths.tail)
 
+  def findDescendant(relativePath: String): Directory =
+    if (relativePath.isEmpty) this
+    else findDescendant(relativePath.split(Directory.SEPARATOR).toList)
+
   def addEntry(newEntry: DirEntry): Directory =
     new Directory(parentPath, name, contents :+ newEntry)
 
@@ -59,6 +63,10 @@ class Directory(
     new Directory(parentPath, name, contents.filter(p => !p.name.equals(entryName)) :+ newEntry)
 
   def isRoot: Boolean = parentPath.isEmpty
+
+  def removeEntry(entryName: String): Directory =
+    if (!hasEntry(entryName)) this
+    else new Directory(parentPath, name, contents.filter(x => !x.name.equals(entryName)))
 
   override def asDirectory: Directory = this
 

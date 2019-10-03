@@ -105,7 +105,8 @@ lazy val commonSettings =
       ),
     parallelExecution.in(Test) := false,
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
-    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
+    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value),
+    fork in Test := true
   )
 
 lazy val dockerSettings =
