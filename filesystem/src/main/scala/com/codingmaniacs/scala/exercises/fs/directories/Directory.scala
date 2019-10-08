@@ -59,8 +59,8 @@ class Directory(
     findEntryHelper(entryName, contents)
   }
 
-  def replaceEntry(entryName: String, newEntry: Directory): Directory =
-    new Directory(parentPath, name, contents.filter(p => !p.name.equals(entryName)) :+ newEntry)
+  def replaceEntry(entryName: String, newEntry: DirEntry): Directory =
+    new Directory(parentPath, name, contents.filter(e => !e.name.equals(entryName)) :+ newEntry)
 
   def isRoot: Boolean = parentPath.isEmpty
 
