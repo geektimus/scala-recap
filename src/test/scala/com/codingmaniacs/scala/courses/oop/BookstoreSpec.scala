@@ -28,7 +28,15 @@ class BookstoreSpec extends Specification {
   "The bookstore" should {
     "allow the creation of a writer" in {
       val writer = new Writer("Edgar", "Poe", 1809)
-      writer.fullname mustEqual "Edgar Poe"
+      writer.fullname must beSome("Edgar Poe")
+    }
+    "allow the creation of a writer (with only first name)" in {
+      val writer = new Writer("Edgar", yearOfBirth = 1809)
+      writer.fullname must beSome("Edgar")
+    }
+    "avoid the creation of a writer without name" in {
+      val writer = new Writer("", yearOfBirth = 1809)
+      writer.fullname must beNone
     }
     "allow the creation of a novel" in {
       val novelName = "The Raven"

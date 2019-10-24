@@ -173,3 +173,7 @@ tags
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
+
+# Metals &  Bloop
+.bloop
+.metals
