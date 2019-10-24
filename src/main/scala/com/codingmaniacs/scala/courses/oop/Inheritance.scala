@@ -25,26 +25,6 @@ import scala.annotation.tailrec
 
 object Inheritance {
 
-  trait Predicate[-T] {
-    def test(el: T): Boolean
-  }
-
-  trait Transformer[-A, B] {
-    def transform(el: A): B
-  }
-
-  class DoubleTransformer extends Transformer[Int, Int] {
-    override def transform(el: Int): Int = el * 2
-  }
-
-  class PairTransformer extends Transformer[Int, MyList[Int]] {
-    override def transform(el: Int): MyList[Int] = new List(el, new List(el * el, EmptyList))
-  }
-
-  class EvenPredicate extends Predicate[Int] {
-    override def test(el: Int): Boolean = el % 2 == 0
-  }
-
   sealed abstract class MyList[+T] {
     def h: T
     def t: MyList[T]
@@ -54,9 +34,9 @@ object Inheritance {
     def reverse: MyList[T]
     def ++[O >: T](ol: MyList[O]): MyList[O]
 
-    def map[O](t: Transformer[T, O]): MyList[O]
-    def filter(p: Predicate[T]): MyList[T]
-    def flapMap[O](t: Transformer[T, MyList[O]]): MyList[O]
+    def map[O](t: T => O): MyList[O]
+    def filter(p: T => Boolean): MyList[T]
+    def flapMap[O](t: T =>  MyList[O]): MyList[O]
 
     protected def prettyPrint: String
     override def toString: String = s"[$prettyPrint]"
@@ -75,11 +55,11 @@ object Inheritance {
 
     override def ++[O >: Nothing](ol: MyList[O]): MyList[O] = ol
 
-    override def map[O](t: Transformer[Nothing, O]): MyList[O] = this
+    override def map[O](t: Nothing => O): MyList[O] = this
 
-    override def filter(p: Predicate[Nothing]): MyList[Nothing] = this
+    override def filter(p: Nothing => Boolean): MyList[Nothing] = this
 
-    override def flapMap[O](t: Transformer[Nothing, MyList[O]]): MyList[O] = this
+    override def flapMap[O](t: Nothing => MyList[O]): MyList[O] = this
 
     override protected def prettyPrint: String = ""
 
@@ -108,31 +88,31 @@ object Inheritance {
     override def ++[O >: T](ol: MyList[O]): MyList[O] =
       new List[O](h, t ++ ol)
 
-    override def map[O](tr: Transformer[T, O]): MyList[O] = {
+    override def map[O](tr: T => O): MyList[O] = {
 
       @tailrec
       def mapRec(res: MyList[O], rem: MyList[T]): MyList[O] =
         rem match {
           case l if l.isEmpty => res
-          case l => mapRec(res.prepend(tr.transform(l.h)), l.t)
+          case l => mapRec(res.prepend(tr(l.h)), l.t)
         }
       mapRec(EmptyList, this)
     }
 
-    override def filter(p: Predicate[T]): MyList[T] = {
+    override def filter(p: T => Boolean): MyList[T] = {
 
       @tailrec
       def filterRec(res: MyList[T], rem: MyList[T]): MyList[T] =
         rem match {
           case l if l.isEmpty => res
-          case l if p.test(l.h) => filterRec(res.prepend(l.h), l.t)
+          case l if p(l.h) => filterRec(res.prepend(l.h), l.t)
           case l => filterRec(res, l.t)
         }
       filterRec(EmptyList, this)
     }
 
-    override def flapMap[O](tr: Transformer[T, MyList[O]]): MyList[O] =
-      tr.transform(h) ++ t.flapMap(tr)
+    override def flapMap[O](tr: T => MyList[O]): MyList[O] =
+      tr(h) ++ t.flapMap(tr)
 
     override def prettyPrint: String = {
 
