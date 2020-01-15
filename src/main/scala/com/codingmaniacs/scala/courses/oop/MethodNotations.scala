@@ -35,4 +35,5 @@ object MethodNotations {
     def apply(): String = s"Hi, my name is $name and I like $favoriteMovie"
     def apply(watchCount: Int): String = s"$name watched $favoriteMovie $watchCount times"
   }
+
 }

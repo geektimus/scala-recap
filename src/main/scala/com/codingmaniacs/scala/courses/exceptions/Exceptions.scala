@@ -67,5 +67,7 @@ object Exceptions {
         case (n, m) => n / m
       }
     }
+
   }
+
 }

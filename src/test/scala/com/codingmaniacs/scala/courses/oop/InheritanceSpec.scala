@@ -21,17 +21,12 @@
 
 package com.codingmaniacs.scala.courses.oop
 
-import com.codingmaniacs.scala.courses.oop.Inheritance.{
-  DoubleTransformer,
-  EmptyList,
-  EvenPredicate,
-  List,
-  PairTransformer
-}
+import com.codingmaniacs.scala.courses.oop.Inheritance.{ EmptyList, List }
 import org.specs2.matcher.AnyMatchers
 import org.specs2.mutable.Specification
+import org.specs2.mock.Mockito
 
-class InheritanceSpec extends Specification with AnyMatchers {
+class InheritanceSpec extends Specification with AnyMatchers with Mockito {
   "The custom list" should {
     "allow the creation of an EmptyList" in {
       val emptyList = EmptyList
@@ -76,20 +71,10 @@ class InheritanceSpec extends Specification with AnyMatchers {
       list.toString mustEqual "[6, 5, 4, 3, 2, 1]"
     }
 
-    "allow the user to map a transformation on a empty list" in {
-      val emptyList = EmptyList
-      val double = new DoubleTransformer()
-
-      val mappedList = emptyList.map(double)
-
-      mappedList.isEmpty must beTrue
-    }
-
     "allow the user to map a transformation on all the elements" in {
       val list = List(1, 2, 3)
-      val double = new DoubleTransformer()
 
-      val mappedList = list.map(double)
+      val mappedList = list.map(_ * 2)
 
       mappedList.isEmpty must beFalse
       mappedList.h mustEqual 2
@@ -97,20 +82,10 @@ class InheritanceSpec extends Specification with AnyMatchers {
       mappedList.t.t.h mustEqual 6
     }
 
-    "allow the user to filter an empty list" in {
-      val emptyList = EmptyList
-      val evenPredicate = new EvenPredicate()
-
-      val mappedList = emptyList.filter(evenPredicate)
-
-      mappedList.isEmpty must beTrue
-    }
-
     "allow the user to filter the elements of a list" in {
       val list = List(1, 2, 3)
-      val evenPredicate = new EvenPredicate()
 
-      val mappedList = list.filter(evenPredicate)
+      val mappedList = list.filter(_ % 2 == 0)
 
       mappedList.isEmpty must beFalse
       mappedList.h mustEqual 2
@@ -140,25 +115,47 @@ class InheritanceSpec extends Specification with AnyMatchers {
       result.t.t.h mustEqual 2
     }
 
-    "allow the user to flatMap over an empty list" in {
-      val emptyList = EmptyList
-      val pairTransformer = new PairTransformer()
-
-      val result = emptyList.flapMap(pairTransformer)
-
-      result.isEmpty must beTrue
-    }
-
     "allow the user to flatMap over a list" in {
       val list = List(1, 2, 3)
-      val pairTransformer = new PairTransformer()
 
-      val result = list.flapMap(pairTransformer)
+      val result = list.flapMap(el => new List(el, new List(el * el, EmptyList)))
 
       result.isEmpty must beFalse
       result.h mustEqual 3
       result.t.h mustEqual 9
       result.toString mustEqual "[3, 9, 2, 4, 1, 1]"
+    }
+
+    "allow the user to sort a list (asc)" in {
+      val list = List(3, 5, 1, 7)
+
+      val result = list.sort((x, y) => y - x)
+
+      result.isEmpty must beFalse
+      result.h mustEqual 7
+      result.t.h mustEqual 5
+      result.toString mustEqual "[7, 5, 3, 1]"
+    }
+
+    "allow the user to sort a list (desc)" in {
+      val list = List(3, 5, 1, 7)
+
+      val result = list.sort((x, y) => x - y)
+
+      result.isEmpty must beFalse
+      result.h mustEqual 1
+      result.t.h mustEqual 3
+      result.toString mustEqual "[1, 3, 5, 7]"
+    }
+
+    "allow the user to traverse a list with foreach" in {
+      val list = List(3, 5, 1, 7)
+
+      val m = mock[Int => Unit]
+
+      list.foreach(m(_))
+
+      there was 4.times(m)
     }
   }
 }

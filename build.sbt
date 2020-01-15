@@ -13,7 +13,8 @@ lazy val `scala-courses` =
           library.scalaLogging,
           library.slf4j,
           library.scalaCheck % Test,
-          library.specs2 % Test
+          library.specs2 % Test,
+          library.specs2Mock % Test
         ),
       version in Docker := "0.1.0-SNAPSHOT"
     )
@@ -26,12 +27,12 @@ lazy val library =
   new {
 
     object Version {
-      val log4j2 = "2.11.0"
-      val log4j2Scala = "11.0"
+      val log4j2 = "2.13.2"
+      val log4j2Scala = "12.0"
       val scalaLogging = "3.9.2"
-      val slf4j = "2.12.0"
+      val slf4j = "2.13.2"
       val scalaCheck = "1.14.0"
-      val specs2 = "4.4.1"
+      val specs2 = "4.8.1"
     }
 
     val log4j2Api = "org.apache.logging.log4j" % "log4j-api" % Version.log4j2
@@ -42,6 +43,7 @@ lazy val library =
 
     val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
     val specs2 = "org.specs2" %% "specs2-core" % Version.specs2
+    val specs2Mock = "org.specs2" %% "specs2-mock" % Version.specs2
   }
 
 // *****************************************************************************
