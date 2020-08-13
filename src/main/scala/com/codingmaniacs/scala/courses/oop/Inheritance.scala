@@ -27,19 +27,22 @@ object Inheritance {
 
   sealed abstract class MyList[+T] {
     def h: T
+
     def t: MyList[T]
     def isEmpty: Boolean
-
     def prepend[O >: T](n: O): MyList[O]
+
     def reverse: MyList[T]
     def ++[O >: T](ol: MyList[O]): MyList[O]
-
     def map[O](t: T => O): MyList[O]
+
     def filter(p: T => Boolean): MyList[T]
     def flapMap[O](t: T => MyList[O]): MyList[O]
-
     def foreach(f: T => Unit): Unit
+
     def sort(s: (T, T) => Int): MyList[T]
+    def zipWith[O](o: MyList[O], f: (T, O) => O): MyList[O]
+    def fold[O](i: O)(f: (O, T) => O): O
 
     protected def prettyPrint: String
     override def toString: String = s"[$prettyPrint]"
@@ -68,8 +71,11 @@ object Inheritance {
 
     override def foreach(f: Nothing => Unit): Unit = ()
 
-    override protected def prettyPrint: String = ""
+    override def zipWith[O](o: MyList[O], f: (Nothing, O) => O): MyList[O] = this
 
+    override def fold[O](i: O)(f: (O, Nothing) => O): O = i
+
+    override protected def prettyPrint: String = ""
   }
 
   case class List[+T](x: T, xs: MyList[T]) extends MyList[T] {
@@ -150,6 +156,33 @@ object Inheritance {
 
       val sortedTail = t.sort(compare)
       insert(h, sortedTail)
+    }
+
+    override def zipWith[O](o: MyList[O], f: (T, O) => O): MyList[O] = {
+
+      @tailrec
+      def zipRec(res: MyList[O], fList: MyList[T], sList: MyList[O]): MyList[O] = {
+        (fList, sList) match {
+          case (fl, sl) if fl.isEmpty || sl.isEmpty => res
+          case (fl, sl) => zipRec(res.prepend(f(fl.h, sl.h)), fl.t, sl.t)
+        }
+      }
+
+      zipRec(EmptyList, this, o)
+    }
+
+    override def fold[O](i: O)(f: (O, T) => O): O = {
+
+      @tailrec
+      def foldRec(res: O, isFirstElement: Boolean, rem: MyList[T]): O = {
+        rem match {
+          case items if items.isEmpty => res
+          case items if isFirstElement => foldRec(f(i, items.h), isFirstElement = false, items.t)
+          case items => foldRec(f(res, items.h), isFirstElement = false, items.t)
+        }
+      }
+
+      foldRec(i, isFirstElement = true, this)
     }
 
   }

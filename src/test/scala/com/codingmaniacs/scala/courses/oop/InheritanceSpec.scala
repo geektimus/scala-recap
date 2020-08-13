@@ -157,5 +157,23 @@ class InheritanceSpec extends Specification with AnyMatchers with Mockito {
 
       there was 4.times(m)
     }
+
+    "allow the user to zip two lists with an operation" in {
+      val list1 = List(3, 5, 1, 7)
+      val list2 = List(1, 3, 5, 7)
+
+      val result = list1.zipWith[Int](list2, (x, y) => x * y)
+
+      result.isEmpty must beFalse
+      result.toString mustEqual "[3, 15, 5, 49]"
+    }
+
+    "allow the user to fold the elements of a list given an initial value" in {
+      val list = List(3, 5, 1, 7)
+
+      val result = list.fold(0)((x, y) => x + y)
+
+      result mustEqual 16
+    }
   }
 }
