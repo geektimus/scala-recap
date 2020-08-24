@@ -175,5 +175,13 @@ class InheritanceSpec extends Specification with AnyMatchers with Mockito {
 
       result mustEqual 16
     }
+
+    "allow the user to fold the elements of a list given an initial value != 0" in {
+      val list = List(3, 5, 1, 7)
+
+      val result = list.fold(10)((x, y) => x + y)
+
+      result mustEqual 26
+    }
   }
 }
