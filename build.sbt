@@ -31,7 +31,7 @@ lazy val library =
       val log4j2Scala = "12.0"
       val scalaLogging = "3.9.2"
       val slf4j = "2.13.2"
-      val scalaCheck = "1.14.0"
+      val scalaCheck = "3.1.2.0"
       val specs2 = "4.8.1"
     }
 
@@ -41,9 +41,16 @@ lazy val library =
     val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % Version.scalaLogging
     val slf4j = "org.apache.logging.log4j" % "log4j-slf4j-impl" % Version.slf4j
 
-    val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
+    //val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
+    val scalaCheck = "org.scalatestplus" %% "scalacheck-1-14" % Version.scalaCheck
     val specs2 = "org.specs2" %% "specs2-core" % Version.specs2
     val specs2Mock = "org.specs2" %% "specs2-mock" % Version.specs2
+  }
+
+
+lazy val compilerPlugins =
+  new {
+    val kindProjector = "org.typelevel"     %% "kind-projector"  % "0.10.3" cross CrossVersion.binary
   }
 
 // *****************************************************************************
@@ -75,18 +82,19 @@ lazy val commonSettings =
         "-unchecked",
         "-Xfatal-warnings",
         "-Xlint",
-        "-Yno-adapted-args",
-        "-Ypartial-unification",
+//        "-Yno-adapted-args",
+//        "-Ypartial-unification",
         "-Ywarn-dead-code",
-        "-Ywarn-infer-any",
+//        "-Ywarn-infer-any",
         "-Ywarn-numeric-widen",
         "-Ywarn-unused",
-        "-Ywarn-unused-import",
+//        "-Ywarn-unused-import",
         "-Ywarn-value-discard"
       ),
     parallelExecution.in(Test) := false,
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
-    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
+    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value),
+    addCompilerPlugin(compilerPlugins.kindProjector)
   )
 
 lazy val dockerSettings =
