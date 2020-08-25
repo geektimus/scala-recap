@@ -41,7 +41,7 @@ object Inheritance {
     def foreach(f: T => Unit): Unit
 
     def sort(s: (T, T) => Int): MyList[T]
-    def zipWith[O](o: MyList[O], f: (T, O) => O): MyList[O]
+    def zipWith[O, C](o: MyList[O], f: (T, O) => C): MyList[C]
     def fold[O](i: O)(f: (O, T) => O): O
 
     protected def prettyPrint: String
@@ -71,9 +71,13 @@ object Inheritance {
 
     override def foreach(f: Nothing => Unit): Unit = ()
 
-    override def zipWith[O](o: MyList[O], f: (Nothing, O) => O): MyList[O] = this
+    override def zipWith[O, C](o: MyList[O], f: (Nothing, O) => C): MyList[C] =
+      if (!o.isEmpty)
+        throw new RuntimeException("The list don't have the same size")
+      else
+        EmptyList
 
-    override def fold[O](i: O)(f: (O, Nothing) => O): O = i
+    override def fold[O](start: O)(f: (O, Nothing) => O): O = start
 
     override protected def prettyPrint: String = ""
   }
@@ -158,32 +162,23 @@ object Inheritance {
       insert(h, sortedTail)
     }
 
-    override def zipWith[O](o: MyList[O], f: (T, O) => O): MyList[O] = {
+    override def zipWith[O, C](o: MyList[O], f: (T, O) => C): MyList[C] = {
 
       @tailrec
-      def zipRec(res: MyList[O], fList: MyList[T], sList: MyList[O]): MyList[O] = {
+      def zipRec(res: MyList[C], fList: MyList[T], sList: MyList[O]): MyList[C] = {
         (fList, sList) match {
           case (fl, sl) if fl.isEmpty || sl.isEmpty => res
           case (fl, sl) => zipRec(res.prepend(f(fl.h, sl.h)), fl.t, sl.t)
         }
       }
 
-      zipRec(EmptyList, this, o)
+      if (this.isEmpty)
+        throw new RuntimeException("The list don't have the same size")
+      else
+        zipRec(EmptyList, this, o)
     }
 
-    override def fold[O](i: O)(f: (O, T) => O): O = {
-
-      @tailrec
-      def foldRec(res: O, isFirstElement: Boolean, rem: MyList[T]): O = {
-        rem match {
-          case items if items.isEmpty => res
-          case items if isFirstElement => foldRec(f(i, items.h), isFirstElement = false, items.t)
-          case items => foldRec(f(res, items.h), isFirstElement = false, items.t)
-        }
-      }
-
-      foldRec(i, isFirstElement = true, this)
-    }
+    override def fold[O](start: O)(f: (O, T) => O): O = t.fold(f(start, h))(f)
 
   }
 
